@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<!--[if IE 8 ]>    <html class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<!--<![endif]-->
+<html>
+
+<head>
+
+    <title>Archeron Group</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <!--fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!--css-->
+    <link href="{{url_for('static', filename='css/style.css')}}" type="text/css" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/responsive.css')}}" type="text/css" rel="stylesheet">
+    
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/style_digno.css" rel="stylesheet" type="text/css">
+
+    <!-- Important Owl stylesheet for latest news-->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/owl.carousel.css')}}" type="text/css">
+
+    <!-- start js-->
+    <!-- start jquery-min.js-->
+    <script src="{{url_for('static', filename='js/jquery-min.js')}}" type="text/javascript"></script>
+    <!-- end jquery-min.js -->
+
+    <!-- Important Owl Carousel JS for latest news-->
+    <script src="{{url_for('static', filename='js/owl.carousel.js')}}" type="text/javascript"></script>
+
+    <!-- start custom code of js -->
+    <script src="{{url_for('static', filename='js/custom.js')}}" type="text/javascript"></script>
+    <!-- end custom of js --->
+    
+    <!--<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+    -->
+    <script src="../static/js/jquery-3.2.1.js" type="text/javascript"></script>
+     
+     
+     
+     
+         <script type="text/javascript">
+        window.img_source = "";
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                document.getElementById('tb_button').style.visibility = 'hidden';
+                document.getElementById('no_tb_button').style.visibility = 'hidden';
+                document.getElementById('show_doctor_button').style.visibility = 'hidden';
+                document.getElementById('err-msg').innerHTML = "";
+                document.getElementById('sucess_msg').innerHTML = "";
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#show_upload')
+                        .attr('src', e.target.result)
+                };
+                const up_fileType = input.files[0]['type'];
+                const up_file_size = input.files[0]['size'] / 1024 / 1024;
+                console.log("file type : ");
+                console.log(up_fileType);
+                const up_validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+                if (!up_validImageTypes.includes(up_fileType)) {
+                    console.log("Invalid file uploaded");
+                    document.getElementById('err-msg').innerHTML = "Please upload a valid file";
+                    document.getElementById('show_upload').src = "";
+                    return false;
+                }
+                if (up_file_size > 10) {
+                    console.log("very large file uploaded");
+                    console.log(up_file_size);
+                    document.getElementById('err-msg').innerHTML = "Please upload a file smaller than 10 MB";
+                    document.getElementById('show_upload').src = "";
+                    return false;
+
+                }
+                img_source = "uploaded";
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        var token_val = "{{tok}}";
+
+        function handle_form_submit() {
+
+            console.log("form submitted");
+            var disease = "Tuberclosis";
+            
+            
+            if(img_source  == "uploaded"){
+                var property = document.getElementById("file").files[0]
+                if(property == undefined){
+                    $('#show_upload').attr('src', "");
+                    
+                }
+                //var property = document.getElementById("img");
+                console.log(property);
+
+            // Add validation condition for image file 
+
+            //Add condition for url based on disease name
+                const fileType = property['type'];
+                const file_size = property['size'] / 1024 / 1024;
+                console.log("file type : ");
+                console.log(fileType);
+
+                const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+                if (!validImageTypes.includes(fileType)) {
+                    console.log("Invalid file uploaded");
+                    
+                    return false;
+                }
+                if (file_size > 10) {
+                    console.log("very large file uploaded");
+                    console.log(file_size);
+                    
+                    return false;
+
+                }
+
+            }
+            else{
+                var property = ""
+            }
+            var form_data = new FormData();
+            form_data.append("temp_id", 12345)
+            form_data.append("image_file", property);
+            form_data.append("image_source", img_source);
+            console.log(form_data)
+
+           
+            console.log("{{url_for('diag')}}")
+
+
+            document.getElementById('diagnosis_button').style.visibility = 'hidden';
+            document.getElementById('sucess_msg').innerHTML = "Processing Please wait.....";
+            $.ajax({
+                method: 'POST',
+                url: "{{url_for('diag')}}",
+                data: form_data,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log(response);
+                    str = "rbc:"+response.rbc+", wbc:"+response.wbc+", platelates:"+response.platelates;
+
+                    document.getElementById('diagnosis_button').style.visibility = 'visible';
+                    if((response.status)== true)
+		    	         document.getElementById('sucess_msg').innerHTML = str;
+                    else
+			             document.getElementById('sucess_msg').innerHTML = response.message;
+                }
+            });
+
+            return false;
+        }
+
+    </script>
+     
+     
+     
+     
+     
+     
+     
+
+    <!--[if lt IE 9]>
+<script src="js/html5.js"></script>
+<![endif]-->
+
+
+<style>
+    .graph1 {
+        width: 395px;
+        height: 395px;
+        margin-right: 20px;
+        border: 1px solid #eee;
+        float: left;
+        display: table;
+        vertical-align: middle;
+        text-align: center;
+        box-sizing: border-box;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .graph2 {
+        width: 395px;
+        height: 395px;
+        border: 1px solid #eee;
+        float: left;
+        display: table;
+        vertical-align: middle;
+        text-align: center;
+         box-sizing: border-box;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+
+@media (min-width: 768px){
+    
+    html {
+    position: static; !Important;
+}
+
+}
+
+
+    
+</style>
+
+
+    <link href="{{url_for('static', filename='css/datepicker.min.css')}}" rel="stylesheet" type="text/css">
+    <script src="{{url_for('static', filename='js/datepicker.min.js')}}"></script>
+
+    <!-- Include English language -->
+    <script src="{{url_for('static', filename='js/i18n/datepicker.en.js')}}"></script>
+
+
+
+
+    <!-- end js -->
+</head>
+
+<body class="bg-profile popup-calendar">
+    <!-- start header -->
+    <!--post login-->
+
+    <header>
+        <div class="wrapper">
+            <div class="logo"> <a href="javascript:void(0)"><img img src="img//header-logo.png" alt="logo"></a> </div>
+            <div class="right-header">
+                <div class="cw-profile">
+                    <div class="user-frnd-request">
+                        <!--<a href="javascript:void(0)" class="frnd-request-icon"> <span></span> </a>-->
+                        <div class="cw-notifications" id="total-request" style="">
+                            <div class="cw-all-noti-list">
+                                <ul class="cw-notification-popup">
+                                    <li>
+                                        <div class="cw-notification-listing">
+                                            <a href="javascript:void(0)" class="noti-profile-pic">
+                                                <img src="images/profile-pic-big.png" alt="Profile Pic" title="Profile Pic">
+                                            </a>
+                                            <div class="rgt">
+                                                <span><a href="javascript:void(0)" class="noti-title">Maria Nash</a> sent you friend request</span>
+                                                <span class="noti-time">2 hour ago</span>
+                                                <ul class="notification-btn">
+                                                    <li>
+                                                        <form class="req-accept"><input type="submit" value="accept"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-hold"><input type="submit" value="hold"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-decline"><input type="submit" value="decline"></form>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="cw-notification-listing">
+                                            <a href="javascript:void(0)" class="noti-profile-pic">
+                                                <img src="images/profile-pic-big.png" alt="Profile Pic" title="Profile Pic">
+                                            </a>
+                                            <div class="rgt">
+                                                <span><a href="javascript:void(0)" class="noti-title">Maria Nash</a> sent you friend request</span>
+                                                <span class="noti-time">2 hour ago</span>
+                                                <ul class="notification-btn">
+                                                    <li>
+                                                        <form class="req-accept"><input type="submit" value="accept"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-hold"><input type="submit" value="hold"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-decline"><input type="submit" value="decline"></form>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="cw-notification-listing">
+                                            <a href="javascript:void(0)" class="noti-profile-pic">
+                                                <img src="images/profile-pic-big.png" alt="Profile Pic" title="Profile Pic">
+                                            </a>
+                                            <div class="rgt">
+                                                <span><a href="javascript:void(0)" class="noti-title">Maria Nash</a> sent you friend request</span>
+                                                <span class="noti-time">2 hour ago</span>
+                                                <ul class="notification-btn">
+                                                    <li>
+                                                        <form class="req-accept"><input type="submit" value="accept"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-hold"><input type="submit" value="hold"></form>
+                                                    </li>
+                                                    <li>
+                                                        <form class="req-decline"><input type="submit" value="decline"></form>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="noti-req"><a href="javascript:void(0)" class="noti-title">3 new matches</a> sent you friend request</span>
+                                        <span class="noti-req noti-time">2 hour ago</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="show-allnotifications">
+                                <a href="incomming-activity.html" class="btn-anchors btn-profile btn-news">see all incomming activity</a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- <a href="javascript:void(0)" class="cw-profile-setting"> -->
+                        <span class="img profile-img">
+                            <img src="{{url_for('static', filename='images/profile-pic.png')}}" alt="profile-pic" title="profile-pic">
+                        </span>
+                        <span class="profile-name">{{profile_name}}</span>
+                    </a>
+                    <!-- profile settings toggle -->
+                    <div class="cw-setting" style="">
+<!--                         <ul class="cw-set-popup">
+                            <li><a href="javascript:void(0)" class="cw-set cw-set-prof">My Profile</a></li>
+                            <li><a href="javascript:void(0)" class="cw-set cw-set-account">Account Setting</a></li>
+                            <li><a href="javascript:void(0)" class="cw-set cw-set-provacy">Privacy Option</a></li>
+                            <li><a href="javascript:void(0)" class="btn-anchors btn-profile btn-logout">logout</a></li>
+                        </ul> -->
+                    </div>
+                    <!-- end profile setting toggle-->
+                </div>
+                <!-- <a href="javascript:void(0)" class="menu-toggle collapsed"><span>toggle menu</span></a> -->
+                <nav class="main-menu"> <span class="menu-icon">menu</span>
+<!--                     <ul class="cw-main-menu" style="">
+                        <li class="about-us"><a id="about" class="left-arrows" href="javascript:void(0)">About us</a>
+                            <ul id="about-us-sub" class="cw-submenu">
+                                <li><a href="javascript:void(0)">Board Of Directors</a></li>
+                                <li><a href="javascript:void(0)">About CW</a></li>
+                                <li><a href="javascript:void(0)">Team</a></li>
+                                <li><a href="javascript:void(0)">Our Concept</a></li>
+                                <li><a href="javascript:void(0)">Technology</a></li>
+                                <li><a href="javascript:void(0)">Financial Partners</a></li>
+                            </ul>
+                        </li>
+                        <li class="cw-career"><a id="crer" href="career.html">Career</a>
+                        </li>
+
+                        <li><a href="javascript:void(0)">tutorial</a></li>
+                        <li><a href="javascript:void(0)">Contact</a></li>
+                    </ul>
+ -->                </nav>
+            </div>
+
+            <!-- <div class="header-search">
+          <div class="form-group">
+            <input type="text" placeholder="Search by keyword">
+            <button type="button" class="search-btn"></button>
+          </div>
+      </div>-->
+
+        </div>
+    </header>
+
+   <section class="header-nav">
+        <a href="javascript:void(0)" class="profile-menu"></a>
+        <div class="wrapper">
+            <ul class="profile-listing">
+                <li class="active"><a href="fund-seeker-profile-apply-for.html">Tuberculosis</a></li>
+                <li><a href="one-form.html">Chest X-ray </a></li>
+                <li><a href="profile-matches.html">Asus Stick </a></li>
+                <li><a href="fund-seeker-self-search.html">Tele-Medicine</a></li>
+				<li><a href="one-form.html">Blood Test</a></li>
+                <li><a href="profile-matches.html">Breast Cancer</a></li>
+                <li><a href="fund-seeker-self-search.html">Lung Node Malignancy</a></li>
+                <li class="dashboard"><a href="fund-seeker-profile.html">my profile</a></li>
+            </ul>
+        </div>
+    </section>
+
+
+    <!--post login end-->
+
+
+    <!-- start landing content -->
+    <section class="landing-cont profile-overflow">
+        <div id="err-msg" class="error-msg"> <span>{{err_msg}}</span> </div>
+        <div id="sucess_msg" class="sucess-msg"><span>{{sucess_msg}}</span></div>
+        <div class="wrapper">
+            <section class="cw-content heightadjust">
+                <section class="cw-profile-area provider-profile-area">
+
+                    <div class="provider-home-left">
+
+
+
+                        <div class="cw-provider-home-left">
+                            
+
+                            <div class="cw-provider-settings">
+                                <div class="cw-setting-title">
+                                    <h4>my account</h4>
+                                </div>
+                                <ul class="cw-setting-submenu">
+                                    <li><a href="javascript:void(0)">my profile</a></li>
+                                    <li><a href="javascript:void(0)">account setting</a></li>
+                                    <li><a href="javascript:void(0)">privacy option</a></li>
+                                </ul>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                        <div class="res-overlay"></div>
+
+                    </div>
+                    <!-- profile content -->
+                    <aside class="cw-provider-left cw-provider-home-center" style="width: 79%;">
+
+                        <!-- start accepted proposal-->
+                        <div class="cw-profile-pad no-gutter">
+                            <div class="cw-gutter">
+                                <h4 class="profile-about"></h4>
+                            </div>
+                            <div class="cw-gutter margin-adj" style="padding-bottom: 20px;">
+
+
+
+                                <!--TB-->
+                                    
+                                    <div class="pagewrap" style="position: static; height: 500px;">
+
+        <div class="pgcontent">
+
+
+            <div class="logo">
+               <!-- <img src="../static/images_digno/uae-left-logo.png" class="lgleft pglogos">
+                <img src="../static/images_digno/uae-right-logo.png" class="lgright pglogos">-->
+                
+                
+                <img src="{{url_for('static', filename='images_digno/uae-left-logo.png')}}" class="lgleft pglogos" style="left:inherit;">
+                <img src="{{url_for('static', filename='images_digno/uae-right-logo.png')}}" class="lgright pglogos">
+            </div>
+            <div id="err-msg" class="error-msg"> <span>{{err_msg}}</span> </div>
+			<div id="sucess_msg" class="sucess-msg"><span>{{sucess_msg}}</span></div>
+            <div class="mlines">
+                <span class="fileup" style="top: 308px; left: 130px;">
+                    <label class="digno-upload_button" for="file">UPLOAD</label><i class="fa fa-file-image-o"></i>
+                    <input class="digno-upload_input" id="file" type="file" value="" onchange="readURL(this);" />
+                </span>
+                <span id="diagnosis_button" class="dignobtn" style="top: 339px; right: 15px;"><button onclick="handle_form_submit();" class="dignoopt">DIAGNOSIS</button></span>
+
+                <span class="number-res"></span>
+
+                <h4 id="xray-head" style="top: 102px; right: 75px; font-size: 16px;">X-RAY</h4>
+                <div class="xray-box" style="width: 20%; top: 192px; right: 84px;">
+                    <img src="" id="show_upload" class="x-ray-file" >
+                </div>
+
+
+            </div>
+
+            <div class="results">
+                <span id="tb_button" class="showresult showresult1" style="left: 37px; top: -14px; height: 26px;"><button class="res1 res">Lung Nodule Malignancy</button></span>
+                <span id="no_tb_button" class="showresult showresult2" style="right: 36px; top:-14px; height: 26px;"><button class="res2 res">NO Malignancy</button></span>
+                <span id="show_doctor_button" class="showresult showresult3" style="width: 198px; height: 30px; padding: 0;"><button class="res3 res" style="color: #fff;">REPORT TO DOCTOR</button></span>
+
+               
+               <span class="info-1"><button id="samplebtn" class="res">Sample Images</button></span>
+                <span class="info" style="top:-18px; left: -70px; height: 37px; width: 60px;"><button id="infobtn" class="res">&nbsp;</button></span>
+
+            </div>
+
+        </div>
+
+
+        <!--info section-->
+        <div class="infowrap" style="left: 0;">
+<button class="backbtn">Home</button>
+            <div class="infovideo">
+
+                <video controls autoplay>
+                    <source src="{{url_for('static', filename='video/AI-Video.mp4')}}" type="video/mp4">
+                    <source src="{{url_for('static', filename='static/video/AI-Video.mp4')}}" type="video/mp4">
+                </video>
+
+            </div>
+
+        </div>
+        <!--end info section-->
+        
+        
+        
+        
+          <!--browse section-->
+        
+        <div  class="samplewrap" style="display: none;">
+<button id="back_button" class="backbtn gohome">Home</button>
+            <div class="infovideo" style="margin-top: 0;">
+                
+                <div class="samplebox">
+
+                <div class="withtb">
+                    <h1 class="tbhead">With TB</h1>
+                    <ul class="image-list">
+                        <li><button id="MCUCXR_0117_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0117_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0117_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0126_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0126_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0126_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0142_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0142_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0142_1.png')}}"></button></li>
+
+
+                        <li><button id="MCUCXR_0150_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0150_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0150_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0162_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0162_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0162_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0166_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0166_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0166_1.png')}}"></button></li>
+
+
+                        <li><button id="MCUCXR_0173_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0173_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0173_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0188_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0188_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0188_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0195_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0195_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0195_1.png')}}"></button></li>
+
+                        <li><button id="MCUCXR_0196_1.png" onclick="source_image(this.id);"><img id="img_MCUCXR_0196_1.png" src="{{url_for('static', filename='tb_images/MCUCXR_0196_1.png')}}"></button></li>
+
+
+
+                    </ul>
+                </div><!--tab section-->
+                
+                <div class="withouttb">
+                     <h1 class="tbhead">Without TB</h1>
+                      <ul class="image-list">
+                        <li><button id="CHNCXR_0002_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0002_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0002_0.png')}}"></button></li>
+
+                        <li><button id="CHNCXR_0004_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0004_0.png"src="{{url_for('static', filename='non_tb_images/CHNCXR_0004_0.png')}}"></button></li>
+
+                         <li><button id="CHNCXR_0005_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0005_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0005_0.png')}}"></button></li>
+
+                        <li><button id="CHNCXR_0006_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0006_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0006_0.png')}}"></button></li>
+
+                         <li><button id="CHNCXR_0008_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0008_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0008_0.png')}}"></button></li>
+
+                        <li><button id="CHNCXR_0010_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0010_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0010_0.png')}}"></button></li>
+
+                         <li><button id="CHNCXR_0012_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0012_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0012_0.png')}}"></button></li>
+
+                        <li><button id="CHNCXR_0013_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0013_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0013_0.png')}}"></button></li>
+
+                         <li><button id="CHNCXR_0014_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0014_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0014_0.png')}}"></button></li>
+
+                        <li><button id="CHNCXR_0016_0.png" onclick="source_image(this.id);"><img id="img_CHNCXR_0016_0.png" src="{{url_for('static', filename='non_tb_images/CHNCXR_0016_0.png')}}"></button></li>
+                    </ul>
+                </div><!--tab section-->
+                
+                </div>
+                
+            </div>
+
+        </div>
+        
+        <!--end browse section-->
+        
+
+
+
+    </div>
+                                    
+                             
+                                <!--End TB-->
+
+
+
+
+
+                            </div>
+                        </div>
+                        <!-- end accepted proposal-->
+
+                    </aside>
+                    <!-- end profile content -->
+
+                    <!-- start right profile content -->
+
+                    <!-- end right profile content -->
+                </section>
+            </section>
+        </div>
+    </section>
+    <!-- end landing content -->
+
+    <!-- start footer -->
+    <!-- start footer -->
+    <footer class="footer">
+        <div class="wrapper" style="width: 1200px;">
+            <div class="footer-cont">
+                <!--<span class="open-close"><i class="plus"></i></span>-->
+                <div class="footer-top">
+                    <div class="about-us">
+                        <!--<h4>About us</h4>-->
+                        <h2>Archeron Group</h2>
+                        <p>Healthcare Innovation for a healthier mankind.</br>We use Deep Neural Networks to create national level large scalable solutions for global markets</p>
+                    </div>
+                    <nav class="nav-footer">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li><a class="transition" >Search</a></li>
+                            <li><a class="transition" >Connection</a></li>
+                            <li><a class="transition" >My Profile</a></li>
+                            <li><a class="transition" >User Guide</a></li>
+                        </ul>
+                    </nav>
+                    <div class="quick-contact">
+                        <h4>Contact Us</h4>
+                        <div class="add">
+                            <address>
+                                Bhartiya city, Bengaluru, Karnataka
+                            </address>
+                        </div>
+                        <div class="add phoneno">
+                            <h5>Phone Number</h5>
+                            <span>+91-9879019497, +971-504921423</span>
+                        </div>
+                        <div class="add email">
+                            <h5>Email Address</h5>
+                            <a >contact@archerongroup.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+
+    <!-- end footer -->
+    
+    
+    
+    
+    
+           
+<script>
+    $("#samplebtn").click(function() {
+        $(".samplewrap").css('display','block');
+    });
+    
+      $(".gohome").click(function() {
+        $(".samplewrap").css('display','none');
+    });
+</script>
+       
+       
+       
+       
+        <!--info-->
+
+    <script>
+var button = $( '#infobtn' )[0];
+var elem = $( '.infowrap' )[0];
+
+$( button ).on( 'click', function ( e ) {
+$( elem ).show();
+e.stopPropagation();
+});
+
+$( document ).on( 'click', function ( e ) {
+if ( $( e.target ).closest( elem ).length === 0 ) {
+$( elem ).hide();
+}
+});
+
+$( document ).on( 'keydown', function ( e ) {
+if ( e.keyCode === 27 ) {
+$( elem ).hide();
+}
+});
+$(".backbtn").click(function(){
+  $(".infowrap").hide();
+});
+
+    </script>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+</body>
+
+</html>

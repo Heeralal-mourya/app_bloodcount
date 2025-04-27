@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Healthcare</title>
+    <link href="../static/css/blood-count.css" rel="stylesheet" type="text/css">
+    <script src="../static/js/jquery-3.5.0.min.js"></script>
+    <script src="../static/js/wheel-zoom.js" type="text/javascript"></script>
+     <style type="text/css" media="screen">
+        .bufferscreen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            z-index: 999999;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+            left: 0;
+            top: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            margin: 6px;
+            border: 6px solid #fff;
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: #fff transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+
+        .lds-ring div:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+
+        .lds-ring div:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+
+        @keyframes lds-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .errorMsg {
+            position: absolute;
+            color: red;
+            justify-content: center;
+            z-index: 999999999999;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 16px;
+            box-shadow: 0px 6px 11px #333;
+            box-sizing: border-box;
+            left: 0;
+            text-align: center;
+            font-size: 22px;
+            display: none;
+            font-family: sans-serif;
+            font-weight: 400;
+        }
+    </style>
+
+</head>
+
+<body id="resultPage">
+
+    <div class="wrap">
+        <header>
+            <a href="#"><img src="../static/images/homeBtn.png" alt=""></a>
+            <img src="../static/images/logo.png" alt="">
+            <a href="#"><img src="../static/images/login-btn.png"></a>
+        </header>
+        <div class="main">
+            <section class="box box-left">
+                <div class="box-wrap">
+                    <div class="upImg-Box">
+                        <img id="show-blood-uploaded-image" src="#" alt="" class="upImg zoom" style="width: 800px; height: 670px;">
+                    </div>
+<!--                    <span class="zoomBtn"><img src="images/zoom.png"></span>-->
+                    <div class="upload-btn-wrapper mt20">
+                        <button class="btn2 upimagenow">Upload a file</button>
+                     <!--   <input id="input-blood-image" type="file" name="myfile" class="upimagenow"> -->
+<!--                        <input type="file" name="myfile" class="upimagenow">-->
+                    </div>
+                </div>
+            </section>
+            <section class="box box-right">
+                <div class="raw headSec">
+                    <span>Blood Count</span><span>Result</span>
+                </div>
+                <div class="raw m20">
+                    <div class="result-sec">
+                        <ul class="resultTable">
+                            <!--li will be loop for the result-->
+                            <div id="result-data" style="font-size: 36px;">
+
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+                <div class="raw submitSec">
+                    <button id="analyse-button">Diagnose</button><button class="saveBtn">Save</button>
+                </div>
+            </section>
+               <!--sample images-->
+
+                
+            <div class="slide-sample">
+                <div class="slideHead" style="margin-bottom: 20px;">
+                    <h4>Recently uploaded :</h4>
+                    <div class="upload-btn-wrapper">
+                        <button class="btn2">Browse</button>
+                        <input id="input-blood-image" type="file" name="myfile" class="upimagenow">
+                    </div>
+                </div>
+
+                <!--                <a href="#" class="preSlide">&#60;</a>-->
+                <div class="slideouter">
+                        <div class="slideinner srcl">
+                            <div><img src="../static/images/blood-count/Blood_cell_1.jpg" alt="" onclick="myFunction(this)"  ></div>
+                        <div><img src="../static/images/blood-count/Blood_cell_4.jpg" alt="" onclick="myFunction(this)" ></div>
+                        <div><img src="../static/images/blood-count/Blood_cell_5.jpg" alt="" onclick="myFunction(this)" ></div>
+                        <div><img src="../static/images/blood-count/Blood_cell_7.jpg" alt="" onclick="myFunction(this)" ></div>
+                        <!-- <div><img src="../static/braintumour/tumour_4.jpg" alt=""></div>
+                        <div><img src="../static/braintumour/tumour_5.jpg" alt=""></div>
+                        <div><img src="../static/braintumour/tumour_6.jpg" alt=""></div>
+                        <div><img src="../static/braintumour/tumour_7.jpg" alt=""></div>
+                        <div><img src="../static/braintumour/tumour_9.jpg" alt=""></div>
+                        <div><img src="../static/braintumour/tumour_8.jpg.jpg" alt=""></div> -->
+                    </div>
+                </div>
+                <!--                <a href="#" class="nextSlide">&#62;</a>-->
+
+                <div class="slideHead" style="margin-top: 20px">
+                    <button class="thmBtn closeSample">Cancel</button>
+                    <button class="thmBtn">Upload</button>
+                </div>
+            </div>
+
+        </div>
+        <div id="buffer" class="bufferscreen">
+            <div id="spinner" class="lds-ring">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+    </div>
+
+    <script>
+
+
+
+        $(function() {
+            $(".upimagenow").change(function() {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = imageIsLoaded;
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+
+        function imageIsLoaded(e) {
+            $('.upImg').attr('src', e.target.result);
+        };
+    </script>
+
+   	<script>
+		wheelzoom(document.querySelector('img.zoom'));
+	</script>
+	
+	
+    <!--sample image js-->
+
+    <!--
+    <script>
+        var step = 100;
+        var scrolling = true;
+
+        // Wire up events for the 'scrollUp' link:
+        $(".pre").bind("click", function(event) {
+            event.preventDefault();
+            // Animates the scrollTop property by the specified
+            // step.
+            $("div").animate({
+                scrollLeft: "-=" + step + "px"
+            });
+        });
+
+        $(".next").bind("click", function(event) {
+            event.preventDefault();
+            $("div").animate({
+                scrollLeft: "+=" + step + "px"
+            });
+        })
+    </script>
+-->
+
+
+    <!--end sample image-->
+
+
+    <!--show hide sample-->
+
+
+    <script>
+        $(document).ready(function() {
+            $(".closeSample").click(function() {
+                $(".slide-sample").hide();
+            });
+        });
+
+
+
+        $(document).ready(function() {
+            $(".upimagenow").click(function() {
+                $(".slide-sample").show();
+            });
+        });
+    </script>
+
+    <!--end show hide sample-->
+    <script>
+                var uploadimg;
+      var selectFlag = false;
+      var uploadFlag = false;
+
+        function myFunction(event) {
+           
+        $('.slide-sample').hide();
+  
+        document.getElementById('show-blood-uploaded-image').style.visibility='visible';
+        document.getElementById('analyse-button').disabled = false;
+        document.getElementById('result-data').innerHTML = '';
+        $('#show-blood-uploaded-image').attr('src', event.src);
+        document.getElementById('result-data').innerHTML = '';
+        var request = new XMLHttpRequest();
+        request.open('GET', event.src, true);
+        request.responseType = 'blob';
+        request.onload = function () {
+          var reader = new FileReader();
+          reader.readAsDataURL(request.response);
+          console.log(request.response);
+          uploadimg = new File([request.response], 'image.png', {
+            type: 'image/png',
+          });
+          selectFlag = true;
+        };
+        request.send();
+      }
+
+        $(document).ready(() => {
+           
+           document.getElementById('show-blood-uploaded-image').style.visibility='hidden';
+           
+    
+        })
+       document.getElementById('input-blood-image').addEventListener('change',function(){
+        document.getElementById('result-data').innerHTML = '';
+  
+        selectFlag = false;
+          uploadFlag = true;
+           if(this.files[0]){
+               if(validateImage(this.files[0])){
+                   document.getElementById('show-blood-uploaded-image').style.visibility='visible';
+                   document.getElementById('analyse-button').disabled = false;
+                   $(".slide-sample").hide();
+                   var reader = new FileReader()
+                   reader.onload = function(e){
+                       $('#show-blood-uploaded-image').attr('src',e.target.result)
+                   }
+                   reader.readAsDataURL(this.files[0])
+               }
+               
+           }
+ 
+       })
+    
+       function validateImage(file){
+           var image_file_type = file.type
+           var image_file_size = file.size /1024/1024
+           const valid_image_file_types = ['image/gif','image/tiff','image/jpeg', 'image/png'];
+           var message = ''
+           let status = false
+           if(!valid_image_file_types.includes(image_file_type)){
+               message = 'invalid image file type ,image file should be tiff ,jpg or png'
+               status = false
+           }
+           else if(image_file_size > 5){
+               message = 'File size too big ,should be less that 10 mb'
+               status = false
+           }
+           else{
+               message = 'image uploaded successfully'
+               status = true
+           }
+           //alert(message)
+           return status
+       }
+    
+       function getResults() {
+        if (selectFlag === false && uploadFlag === false) {
+          showErrorMsg('Please upload an X-Ray Scan!');
+          return false;
+        }
+        var img;
+        console.log(selectFlag);
+        if (selectFlag === true) {
+          img = uploadimg;
+        } else {
+          img = document.getElementById('input-blood-image').files[0];
+        }
+        console.log(img);
+        $('#buffer').show();
+
+           document.getElementById('analyse-button').disabled = true;
+           //var image_file = document.getElementById("input-blood-image").files[0]
+           //console.log(image_file);
+           var image_file=img;
+           var form_data = new FormData();
+           
+           form_data.append("image_file", image_file);
+           form_data.append("temp_id",'12345')
+           
+           $.ajax({
+                 method: 'POST',
+                    url: "{{url_for('diag')}}",
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response);
+                        $('#buffer').hide();
+                       
+                       // if the model made predictions successfully
+                       // message will be empty string in this case
+                       if(response['status'] === true){
+                           var result_data=new FormData();
+                           var res_array=[];
+                           result_data=response;
+                           delete result_data['status'];
+                          Object.keys(result_data).forEach(key=>{
+                            res_array.push({
+                                diseaseName:checkName(key),
+                                value:result_data[key]
+                            })
+                          })
+                          console.log(res_array);
+                          var html="<table padding= '8'>";
+                          for(var i=0;i<res_array.length;i++){
+                            html+="<tr>";
+                        html+="<td>"+res_array[i].diseaseName+"</td>";
+                        html+="<td>"+res_array[i].value+"</td>";
+            html+="</tr>";
+    
+        }
+        html+="</table>";
+    
+                           document.getElementById('result-data').innerHTML = html;
+                       }
+                       // if the model could not make predictions successfully
+                       // message will contain the string of error during processing 
+                       else{
+                           var message = response['message']
+                           document.getElementById('analyse-button').disabled = false;
+                           // document.getElementById('result-message').innerHTML = message;
+                       }
+                          
+                 },
+                 error : function(err){
+                   console.log('something went wrong')
+                   document.getElementById('analyse-button').disabled = false;
+                 }
+             });
+    
+       }
+    
+      function  checkName(name) {   
+            if (name === "platelates") { 
+             return "Platelets Count";    }
+            if (name === "wbc") {   
+               return "White Blood Count";    } 
+               if (name === "rbc") {      
+                return "Red Blood Count";    }
+                  }
+    
+       $('#analyse-button').click(function(){
+           getResults();
+       })
+    
+       
+        $(document).ready(function() {
+          yourFunction();
+        });
+        function yourFunction() {
+          $('#buffer').hide();
+        }
+
+    </script>
+   
+
+
+
+
+</body>
+
+</html>
